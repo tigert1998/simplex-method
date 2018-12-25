@@ -7,8 +7,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(src_dir "src")
 set(bin_dir "bin")
+set(include_dir "include")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${bin_dir})
 
+include_directories(${include_dir})
 aux_source_directory(${src_dir} srcs)
 
 add_executable("main" ${srcs})
