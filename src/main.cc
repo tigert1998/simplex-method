@@ -175,6 +175,12 @@ struct ShortestPathBenchmark {
             generate(n);
             dijkstra();
             lp();
+            for (auto j = 0; j < REP; j++) {
+                auto delta = result_dij[j] - result_lp[j];
+                if (fabs(delta) > 1e-5) {
+                    cout << "err:" << delta << endl;
+                }
+            }
             n *= 2;
         }
     }
