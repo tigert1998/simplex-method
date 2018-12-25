@@ -30,7 +30,7 @@ struct edge {
     }
 };
 
-constexpr int REP = 1000;
+constexpr int REP = 100;
 constexpr int MAX_D = 100;
 constexpr int INF = (int) 1e6;
 
@@ -132,9 +132,9 @@ struct ShortestPathBenchmark {
         vector<double> c;
         vector<vector<double>> a;
         timer timer;
-        LinearProgramSolver solver;
 
         for (auto r = 0; r < REP; r++) {
+            LinearProgramSolver solver;
             auto s = sources[r];
             auto t = targets[r];
 
