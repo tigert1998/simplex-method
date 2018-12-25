@@ -13,4 +13,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${bin_dir})
 include_directories(${include_dir})
 aux_source_directory(${src_dir} srcs)
 
-add_executable("main" ${srcs})
+add_executable("main" src/main.cc src/linear_program_solver.cc include/timer.h)
+add_executable("demo" src/demo.cc src/linear_program_solver.cc include/timer.h)
