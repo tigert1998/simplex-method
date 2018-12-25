@@ -70,3 +70,20 @@
     \end{align*}
 
 \end{frame}
+
+\begin{frame}{Maximum flow}
+
+    \begin{figure}
+        \includegraphics[width=0.3\textwidth]{assets/maximum_flow.png}
+        \caption{Maximum flow problem}
+    \end{figure}
+
+    maximize $$\sum_{v\in V}f_{sv}-\sum_{v\in V}f_{vs}$$
+    subject to 
+    \begin{align*}
+        f_{uv} &\le c(u,v) &\text{for each }u,v\in V\\
+        \sum_{v\in V} f_{vu}&= \sum_{v\in V} f_{uv} &\text{for each } u\in V-\{s,t\}\\
+        f_{uv}&\ge 0 &\text{for each }u,v\in V
+    \end{align*}
+
+\end{frame}

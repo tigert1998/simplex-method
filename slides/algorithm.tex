@@ -11,3 +11,117 @@
     \end{gather*}
 
 \end{frame}
+
+\subsection{Definitions}
+
+\begin{frame}{Definitions}
+
+    \begin{itemize}
+        \item We call the variables on the left-hand side of
+              the equalities \textbf{basic variables} and those on the right-hand side
+              \textbf{nonbasic variables}.
+        \item We use $N$ to denote the set of indices of the nonbasic variables
+              and $B$ to denote the set of indices of the basic variables.
+              We always have that $|N|=n,|B|=m$, and $N\cup B=\{1, 2,\cdots, n+m\}$.
+        \item \textbf{basic solution}: set all the (nonbasic) variables on the
+              right-hand side to $0$ and then compute the values of the (basic) variables
+              on the left-hand side.
+    \end{itemize}
+
+\end{frame}
+
+\subsection{Simplex algorithm}
+
+\begin{frame}{Simplex}
+
+    In geometry, a simplex (plural: simplexes or simplices) is a
+    generalization of the notion of a triangle or tetrahedron to arbitrary dimensions.
+    Specifically, a $k$-simplex is a $k$-dimensional polytope which is
+    the convex hull of its $k + 1$ vertices.
+
+    \begin{figure}
+        \includegraphics[width=0.7\textwidth]{assets/simplex.png}
+        \caption{Simplex}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Simplex algorithm $\Rightarrow$ Start with an example!}
+
+    \begin{block}{Standard form}
+        maximize $$3x_1 + x_2 + 2x_3$$
+        subject to
+        \begin{align*}
+            x_1 + x_2 + 3x_3   & \le 30 \\
+            2x_1 + 2x_2 + 5x_3 & \le 24 \\
+            4x_1 + x_2 + 2x_3  & \le 36
+        \end{align*}
+        $$x_1, x_2, x_3\ge 0$$
+    \end{block}
+
+\end{frame}
+
+\begin{frame}{Simplex algorithm $\Rightarrow$ Start with an example!}
+
+    \begin{block}{Convert to slack form}
+        maximize $$z = 3x_1 + x_2 + 2x_3$$
+        subject to
+        \begin{align*}
+            x_4 & = 30 - x_1 - x_2 - 3x_3   \\
+            x_5 & = 24 - 2x_1 - 2x_2 - 5x_3 \\
+            x_6 & = 36 - 4x_1 - x_2 - 2x_3  \\
+        \end{align*}
+        $$x_1, x_2, x_3, x_4, x_5, x_6\ge 0$$
+    \end{block}
+
+    Our goal, in each iteration, is to reformulate the linear program so that the basic
+    solution has a greater objective value.
+
+\end{frame}
+
+\begin{frame}{Simplex algorithm $\Rightarrow$ Start with an example!}
+
+    \begin{block}{Pivot($x_e = x_1$, $x_l = x_6$)}
+        \begin{align*}
+            z   & = 27 + \frac{x_2}{4} + \frac{x_3}{2} - \frac{3x_6}{4}  \\
+            x_1 & = 9 - \frac{x_2}{4} - \frac{x_3}{2} - \frac{x_6}{4}    \\
+            x_4 & = 21 - \frac{3x_2}{4} - \frac{5x_3}{2} + \frac{x_6}{4} \\
+            x_5 & = 6 - \frac{3x_2}{2} - 4x_3 + \frac{x_6}{2}            \\
+        \end{align*}
+        Here we have $B = \{1, 4, 5\}, N = \{2, 3, 6\}$
+    \end{block}
+
+    A \textbf{pivot} chooses a nonbasic variable $x_e$,
+    called the \textbf{entering variable}, and a basic variable $x_l$,
+    called the \textbf{leaving variable}, and exchanges their roles.
+
+\end{frame}
+
+\begin{frame}{Simplex algorithm $\Rightarrow$ Start with an example!}
+
+    After performing Pivot($x_e = x_3$, $x_l = x_5$) 
+    and Pivot($x_e = x_2$, $x_l = x_3$), we get:
+    \begin{align*}
+        z   & = 28 - \frac{x_3}{6} - \frac{x_5}{6} - \frac{2x_6}{3} \\
+        x_1 & = 8 + \frac{x_3}{6} + \frac{x_5}{6} - \frac{x_6}{3}   \\
+        x_2 & = 4 - \frac{8x_3}{3} - \frac{2x_5}{3} + \frac{x_6}{3} \\
+        x_4 & = 18 - \frac{x_3}{2} + \frac{x_5}{2}                  \\
+    \end{align*}
+    Here we have $B = \{1, 2, 4\}, N = \{3, 5, 6\}$\\
+    $\because c_j < 0$ for $j\in N$
+    $\therefore$ answer is $28$
+
+\end{frame}
+
+\begin{frame}{Issues}
+
+    \begin{itemize}
+        \item How do we choose the entering and leaving variables?
+        \item How do we determine whether a linear program is unbounded?
+        \item How do we determine whether a linear program is feasible?
+        \item What do we do if the linear program is feasible, 
+        but the initial basic solution is infeasible?
+    \end{itemize}
+
+\end{frame}
+
