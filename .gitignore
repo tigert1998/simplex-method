@@ -1,2 +1,6 @@
 cmake-build-debug
 .idea
+
+slides/*
+!slides/*.tex
+!slides/assets
