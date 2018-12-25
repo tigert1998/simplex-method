@@ -99,7 +99,7 @@
 
 \begin{frame}{Simplex algorithm $\Rightarrow$ Start with an example!}
 
-    After performing Pivot($x_e = x_3$, $x_l = x_5$) 
+    After performing Pivot($x_e = x_3$, $x_l = x_5$)
     and Pivot($x_e = x_2$, $x_l = x_3$), we get:
     \begin{align*}
         z   & = 28 - \frac{x_3}{6} - \frac{x_5}{6} - \frac{2x_6}{3} \\
@@ -119,9 +119,54 @@
         \item How do we choose the entering and leaving variables?
         \item How do we determine whether a linear program is unbounded?
         \item How do we determine whether a linear program is feasible?
-        \item What do we do if the linear program is feasible, 
-        but the initial basic solution is infeasible?
+        \item What do we do if the linear program is feasible,
+              but the initial basic solution is infeasible?
     \end{itemize}
 
 \end{frame}
 
+\begin{frame}{$\exists b_i<0$}
+
+    The basic solution is not feasible anymore!
+    \begin{block}{auxiliary linear program}
+        maximize $$-x_0$$
+        subject to
+        \begin{align*}
+            \sum_{j=1}^n a_{ij}x_j-x_0 & \le b_i & \text{ for } i =1,2,\cdots, m \\
+            x_j                        & \ge 0   & \text{ for } j = 0,1,\cdots,n
+        \end{align*}
+        Then $L$ is feasible if and only if the optimal objective value of $L_{aux}$ is 0.
+        If feasible, $L_{aux}$ provides a feasible solution 
+        with which we can initialize $L$.
+    \end{block}
+
+\end{frame}
+
+\begin{frame}{Others}
+    \begin{block}{Termination}
+        \begin{itemize}
+            \item at most $\binom{n + m}{m}$ iterations
+            \item may not terminate!
+            \item \textbf{Bland’s rule}
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Why always the optimal solution?}
+        \textbf{linear-programming duality}
+    \end{block}
+\end{frame}
+
+\subsection{Analysis}
+
+\begin{frame}{Analysis}
+
+    \begin{itemize}
+        \item Not a polynomial time algorithm. Minty constructed an example
+              on which the simplex algorithm runs through $2^n-1$ iterations.
+        \item The ellipsoid algorithm was the first polynomial-time
+              algorithm for linear programming.
+        \item To date, the ellipsoid algorithm does not appear to be
+              competitive with the simplex algorithm in practice.
+    \end{itemize}
+
+\end{frame}
