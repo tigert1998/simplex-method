@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+
 using namespace std;
 
 struct edge {
@@ -39,7 +40,9 @@ struct ShortestPathBenchmark {
     int m;  // number of edges
 
     int sources[REP];
-    int result_dij[REP];
+    int targets[REP];
+    double result_dij[REP];
+    double result_lp[REP];
 
     void generate(int n) {
         this->n = n;
@@ -61,8 +64,11 @@ struct ShortestPathBenchmark {
             edge_lst.push_back({e.first.u, e.first.v, e.second});
         }
 
-        for (int& source : sources) {
-            source = rand() % n;
+        int p = 0;
+        while (p < REP) {
+            sources[p] = rand() % n;
+            targets[p] = rand() % n;
+            if (sources[p] != targets[p]) p++;
         }
     }
 
@@ -75,11 +81,12 @@ struct ShortestPathBenchmark {
             adj_list[e.v].push_back({e.v, e.u, e.w});
         }
 
-        timer t;
+        timer timer;
         for (auto r = 0; r < REP; r++) {
             auto s = sources[r];
+            auto t = targets[r];
 
-            // build
+            // init
             int dis[n];
             bool inset[n];
             for (auto i = 0; i < n; i++) {
@@ -87,8 +94,6 @@ struct ShortestPathBenchmark {
                 inset[i] = false;
             }
             dis[s] = 0;
-
-            int max_d = 0;  // as certificate
 
             // main algorithm
             for (auto k = 0; k < n; k++) {
@@ -101,7 +106,6 @@ struct ShortestPathBenchmark {
                         min_idx = idx;
                     }
                 }
-                max_d = max(max_d, min_d);
 
                 if (min_idx == -1) break;
 
@@ -112,16 +116,57 @@ struct ShortestPathBenchmark {
                         dis[e.v] = new_dis;
                     }
                 }
+
+                if (min_idx == t) break;
             }
-            result_dij[r] = max_d;
+
+            result_dij[r] = dis[t];
         }
 
-        auto s = t.get_seconds();
+        auto s = timer.get_seconds();
         cout << "dijkstra, " << n << ", " << s << endl;
     }
 
     void lp() {
+        vector<double> b;
+        vector<double> c;
+        vector<vector<double>> a;
+        timer timer;
+        LinearProgramSolver solver;
 
+        for (auto r = 0; r < REP; r++) {
+            auto s = sources[r];
+            auto t = targets[r];
+
+            // target d_t
+            c.resize(n);
+            c[t] = 1;
+
+            // restrictions
+
+            // d_s = 0
+            b.push_back(0);
+            b.push_back(0);
+            vector<double> vec(n);
+            vec[s] = 1;
+            a.push_back(vec);
+            vec[s] = -1;
+            a.push_back(vec);
+
+            // d_v <= d_u + w(u,v)
+            for (auto e:edge_lst) {
+                vec.resize(n);
+                vec[e.v] = 1;
+                vec[e.u] = -1;
+                a.push_back(vec);
+                b.push_back(e.w);
+            }
+            solver.Reset(a, b, c);
+            result_lp[r] = get<1>(solver.Solve());
+        }
+
+        auto s = timer.get_seconds();
+        cout << "linear programming, " << n << ", " << s << endl;
     }
 
     void run() {
@@ -129,6 +174,7 @@ struct ShortestPathBenchmark {
         for (auto i = 0; i < 9; i++) {
             generate(n);
             dijkstra();
+            lp();
             n *= 2;
         }
     }
