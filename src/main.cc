@@ -140,13 +140,17 @@ struct ShortestPathBenchmark {
 
             // target d_t
             c.resize(n);
+			fill(c.begin(), c.end(), 0);
             c[t] = 1;
 
             // restrictions
 
             // d_s = 0
+			b.clear();
             b.push_back(0);
             b.push_back(0);
+
+			a.clear();
             vector<double> vec(n);
             vec[s] = 1;
             a.push_back(vec);
@@ -156,14 +160,22 @@ struct ShortestPathBenchmark {
             // d_v <= d_u + w(u,v)
             for (auto e:edge_lst) {
                 vec.resize(n);
+				fill(vec.begin(), vec.end(), 0);
                 vec[e.v] = 1;
                 vec[e.u] = -1;
                 a.push_back(vec);
                 b.push_back(e.w);
+
+                fill(vec.begin(), vec.end(), 0);
+				vec[e.v] = -1;
+                vec[e.u] = 1;
+                a.push_back(vec);
+                b.push_back(e.w);
             }
             solver.Reset(a, b, c);
-            result_lp[r] = get<1>(solver.Solve());
-        }
+			LinearProgramSolver::ResultType result_type;
+			tie(result_type, result_lp[r]) = solver.Solve();
+		}
 
         auto s = timer.get_seconds();
         cout << "linear programming, " << n << ", " << s << endl;
@@ -178,7 +190,9 @@ struct ShortestPathBenchmark {
             for (auto j = 0; j < REP; j++) {
                 auto delta = result_dij[j] - result_lp[j];
                 if (fabs(delta) > 1e-5) {
-                    cout << "err:" << delta << endl;
+                    cout << "err = " << delta
+						<< ", result_dij = " << result_dij[j] 
+						<< ", result_lp = " << result_lp[j] << "\n";
                 }
             }
             n *= 2;

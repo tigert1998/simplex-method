@@ -7,3 +7,4 @@ slides/*
 
 .vscode
 build
+bin
