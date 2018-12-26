@@ -30,7 +30,7 @@ struct edge {
     }
 };
 
-constexpr int REP = 100;
+constexpr int REP = 5;
 constexpr int MAX_D = 100;
 constexpr int INF = (int) 1e6;
 
@@ -72,7 +72,7 @@ struct ShortestPathBenchmark {
         }
     }
 
-    void dijkstra() {
+    double dijkstra() {
 
         // build
         vector<list<edge>> adj_list(n);
@@ -124,17 +124,18 @@ struct ShortestPathBenchmark {
         }
 
         auto s = timer.get_seconds();
-        cout << "dijkstra, " << n << ", " << s << endl;
+        cout << "dijkstra, " << n << ", " << s << "s" << endl;
+        return s;
     }
 
-    void lp() {
+    double lp() {
+		LinearProgramSolver solver;
         vector<double> b;
         vector<double> c;
         vector<vector<double>> a;
         timer timer;
 
         for (auto r = 0; r < REP; r++) {
-            LinearProgramSolver solver;
             auto s = sources[r];
             auto t = targets[r];
 
@@ -178,15 +179,17 @@ struct ShortestPathBenchmark {
 		}
 
         auto s = timer.get_seconds();
-        cout << "linear programming, " << n << ", " << s << endl;
+        cout << "linear programming, " << n << ", " << s << "s" << endl;
+        return s;
     }
 
     void run() {
-        auto n = 4;
-        for (auto i = 0; i < 9; i++) {
+        vector<double> dij_times;
+        vector<double> lp_times;
+        for (auto n = 4; n <= 32; n++) {
             generate(n);
-            dijkstra();
-            lp();
+            dij_times.push_back(dijkstra());
+            lp_times.push_back(lp());
             for (auto j = 0; j < REP; j++) {
                 auto delta = result_dij[j] - result_lp[j];
                 if (fabs(delta) > 1e-5) {
@@ -195,8 +198,14 @@ struct ShortestPathBenchmark {
 						<< ", result_lp = " << result_lp[j] << "\n";
                 }
             }
-            n *= 2;
         }
+        cout << "dij_times = [" << dij_times[0];
+        for (auto i = 1; i < dij_times.size(); i++) cout << ", " << dij_times[i];
+        cout << "]\n";
+
+        cout << "lp_times = [" << lp_times[0];
+        for (auto i = 1; i < lp_times.size(); i++) cout << ", " << lp_times[i];
+        cout << "]\n";
     }
 };
 
